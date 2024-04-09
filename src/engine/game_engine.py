@@ -2,7 +2,7 @@ import pygame
 import esper
 import json
 
-from src.create.prefab_creator import crear_cuadrado, crear_level
+from src.create.prefab_creator import create_square, create_level, create_player_square
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
@@ -21,6 +21,7 @@ class GameEngine:
         self.window = self.read_json('window.json')
         self.level = self.read_json('level_01.json')
         self.enemies = self.read_json('enemies.json')
+        self.player = self.read_json('player.json')
         
         #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
         self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
@@ -44,7 +45,8 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        crear_level(self.ecs_world, self.level)
+        create_player_square(self.ecs_world, self.player, self.level["player_spawn"])
+        create_level(self.ecs_world, self.level)
                
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -69,7 +71,7 @@ class GameEngine:
         pygame.quit()
         
     def read_json(self, file):
-        f = open('Rhyme_01_000/assets/cfg/' + file, encoding = "utf-8")
+        f = open('assets/cfg/' + file, encoding = "utf-8")
         dictionary = json.loads(f.read())
         f.close()
         return dictionary

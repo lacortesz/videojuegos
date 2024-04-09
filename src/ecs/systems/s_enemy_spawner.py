@@ -1,6 +1,6 @@
 import esper
 from src.ecs.components.c_enemy_spawner import CEnemySpawner, Event
-from src.create.prefab_creator import crear_cuadrado_enemigo
+from src.create.prefab_creator import create_enemy_spawner
 
 def system_enemy_spawner(world:esper.World, enemies:dict, delta_time:float):
     components = world.get_component(CEnemySpawner)
@@ -13,5 +13,5 @@ def system_enemy_spawner(world:esper.World, enemies:dict, delta_time:float):
         for event in c_esp.events:
             if c_esp.ahora >= event.time and not event.actived:
                 event.actived = True                   
-                crear_cuadrado_enemigo(world, event.position, enemies[event.enemy_type])    
+                create_enemy_spawner(world, event.position, enemies[event.enemy_type])    
     
