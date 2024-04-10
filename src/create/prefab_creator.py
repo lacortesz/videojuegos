@@ -1,6 +1,7 @@
 import random
 import esper
 import pygame
+from src.ecs.components.c_input_command import CInputCommand
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -55,3 +56,8 @@ def create_player_square(world:esper.World, player_info:dict, player_lvl_info:di
     player_entity = create_square(world, size, pos, vel, color)
     world.add_component(player_entity, CTagPlayer)
     return player_entity
+
+def create_input_player(world:esper.World):
+    input_left = world.create_entity()
+    world.add_component(input_left,
+                        CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
