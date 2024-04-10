@@ -3,6 +3,7 @@ import esper
 import json
 
 from src.create.prefab_creator import create_input_player, create_square, create_level, create_player_square
+from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_movement import system_movement
@@ -65,6 +66,8 @@ class GameEngine:
         system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_screen_bounce(self.ecs_world, self.screen)
+        system_collission_player_enemy(self.ecs_world, self._player_entity, self.level)
+        self.ecs_world._clear_dead_entities()
         
     def _draw(self):
         self.screen.fill((self.window['bg_color']['r'], self.window['bg_color']['g'], self.window['bg_color']['b']))      
@@ -72,6 +75,7 @@ class GameEngine:
         pygame.display.flip()
 
     def _clean(self):
+        self.ecs_world.clear_database()
         pygame.quit()
         
     def read_json(self, file):
@@ -81,7 +85,6 @@ class GameEngine:
         return dictionary
 
     def _do_action(self, c_input:CInputCommand):
-        print(c_input.name + " " + str(c_input.phase))
         if c_input.name == "PLAYER_LEFT":
             if c_input.phase == CommandPhase.START:
                 self._player_c_v.vel.x -= self.player["input_velocity"]
