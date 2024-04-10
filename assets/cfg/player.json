@@ -8,5 +8,5 @@
         "g":200,
         "b":200
     },
-    "input:velocity":100
+    "input_velocity":100
 }
