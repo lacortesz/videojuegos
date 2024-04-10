@@ -23,8 +23,8 @@ class GameEngine:
         self.enemies = self.read_json('enemies.json')
         self.player = self.read_json('player.json')
         
-        #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
-        self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
+        self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
+        #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
         pygame.display.set_caption(self.window['title'])
         
         self.clock = pygame.time.Clock()
@@ -45,7 +45,8 @@ class GameEngine:
         self._clean()
 
     def _create(self):
-        create_player_square(self.ecs_world, self.player, self.level["player_spawn"])
+        self._player_entity = create_player_square(self.ecs_world, self.player, self.level["player_spawn"])
+        self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         create_level(self.ecs_world, self.level)
                
     def _calculate_time(self):
