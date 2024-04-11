@@ -3,6 +3,7 @@ import esper
 import json
 
 from src.create.prefab_creator import create_bullet, create_input_player, create_square, create_level, create_player_square
+from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_player_limits import system_player_limits
@@ -10,6 +11,7 @@ from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
 from src.ecs.systems.s_enemy_spawner import system_enemy_spawner
+from src.ecs.systems.s_bullet_limits import system_bullet_limits
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -72,6 +74,8 @@ class GameEngine:
         system_screen_bounce(self.ecs_world, self.screen)
         system_player_limits(self.ecs_world, self.screen)
         system_collission_player_enemy(self.ecs_world, self._player_entity, self.level)
+        system_bullet_limits(self.ecs_world, self.screen)
+        system_collission_bullet_enemy(self.ecs_world)
         self.ecs_world._clear_dead_entities()
         
     def _draw(self):
@@ -117,3 +121,5 @@ class GameEngine:
         if c_input.name == "PLAYER_FIRE":
             cuad_rect = self._player_c_s.surf.get_rect(topleft=self._player_c_t.pos) 
             create_bullet(self.ecs_world, self.bullets, cuad_rect.center) 
+            
+            

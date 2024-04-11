@@ -6,16 +6,6 @@ class CEnemySpawner:
         self.events:list[Event] = []       
         for event in level["enemy_spawn_events"]:
             self.events.append(Event(event))       
-        
-        '''    temp = {}
-            temp["time"] = event["time"]
-            temp["enemy_type"] = event["enemy_type"] 
-            position = {}
-            position["x"] = event["position"]["x"]
-            position["y"] = event["position"]["y"]
-            temp["position"] = position
-            temp["actived"] = False
-            self.events.append(temp)'''
             
 class Event:
     def __init__(self, event:dict) -> None:
