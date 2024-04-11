@@ -28,11 +28,3 @@ def system_player_limits(world:esper.World, screen:pygame.Surface):
         if cuad_rect.bottom > screen_rect.height: 
             c_t.pos.y = screen_rect.height - cuad_rect.height
 
-
-        #if cuad_rect.top < 0 or cuad_rect.bottom > screen_rect.height:
-            #c_t.pos.x = screen_rect.height
-            #c_v.vel.x *= 0
-            #c_v.vel.y *= 0
-            #c_v.vel.y *= 0
-            #cuad_rect.clamp_ip(screen_rect)
-            #c_t.pos.y = cuad_rect.y

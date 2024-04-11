@@ -2,7 +2,7 @@ import pygame
 import esper
 import json
 
-from src.create.prefab_creator import create_input_player, create_square, create_level, create_player_square
+from src.create.prefab_creator import create_bullet, create_input_player, create_square, create_level, create_player_square
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_player_limits import system_player_limits
@@ -25,6 +25,7 @@ class GameEngine:
         self.level = self.read_json('level_01.json')
         self.enemies = self.read_json('enemies.json')
         self.player = self.read_json('player.json')
+        self.bullets = self.read_json('bullet.json')
         
         self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
         #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
@@ -50,6 +51,8 @@ class GameEngine:
     def _create(self):
         self._player_entity = create_player_square(self.ecs_world, self.player, self.level["player_spawn"])
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
+        self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
+        self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         create_level(self.ecs_world, self.level)
         create_input_player(self.ecs_world)
                
@@ -110,3 +113,7 @@ class GameEngine:
                 self._player_c_v.vel.y += self.player["input_velocity"]
             elif c_input.phase == CommandPhase.END:
                 self._player_c_v.vel.y -= self.player["input_velocity"]
+                
+        if c_input.name == "PLAYER_FIRE":
+            cuad_rect = self._player_c_s.surf.get_rect(topleft=self._player_c_t.pos) 
+            create_bullet(self.ecs_world, self.bullets, cuad_rect.center) 
