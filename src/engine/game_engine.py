@@ -3,6 +3,7 @@ import esper
 import json
 
 from src.create.prefab_creator import create_bullet, create_input_player, create_square, create_level, create_player_square
+from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
 from src.ecs.systems.s_input_player import system_input_player
@@ -120,6 +121,9 @@ class GameEngine:
                 
         if c_input.name == "PLAYER_FIRE":
             cuad_rect = self._player_c_s.surf.get_rect(topleft=self._player_c_t.pos) 
-            create_bullet(self.ecs_world, self.bullets, cuad_rect.center) 
-            
+            current_bullets = self.ecs_world.get_components(CTagBullet).__len__()
+            max_bullets = self.level["player_spawn"]["max_bullets"]
+            if current_bullets < max_bullets:
+                create_bullet(self.ecs_world, self.bullets, cuad_rect.center) 
+
             

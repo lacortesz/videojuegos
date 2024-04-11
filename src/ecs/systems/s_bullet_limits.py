@@ -22,6 +22,4 @@ def system_bullet_limits(world:esper.World, screen:pygame.Surface):
             cuad_rect.top < 0 or \
             cuad_rect.bottom > screen_rect.height: 
             world.delete_entity(entity)
-            print("bala eliminada")
-
 

@@ -18,7 +18,7 @@ def system_input_player(world:esper,
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
             c_input.phase = CommandPhase.START
             mouse_position = pygame.mouse.get_pos()
-            print("Mouse position x: " + str(mouse_position[0]) + " y: "+ str(mouse_position[1]) )
+            #print("Mouse position x: " + str(mouse_position[0]) + " y: "+ str(mouse_position[1]) )
             do_action(c_input)
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1: 
             c_input.phase = CommandPhase.END
