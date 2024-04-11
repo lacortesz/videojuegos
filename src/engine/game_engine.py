@@ -5,6 +5,7 @@ import json
 from src.create.prefab_creator import create_input_player, create_square, create_level, create_player_square
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
 from src.ecs.systems.s_input_player import system_input_player
+from src.ecs.systems.s_player_limits import system_player_limits
 from src.ecs.systems.s_screen_bounce import system_screen_bounce
 from src.ecs.systems.s_movement import system_movement
 from src.ecs.systems.s_rendering import system_rendering
@@ -66,6 +67,7 @@ class GameEngine:
         system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_screen_bounce(self.ecs_world, self.screen)
+        system_player_limits(self.ecs_world, self.screen)
         system_collission_player_enemy(self.ecs_world, self._player_entity, self.level)
         self.ecs_world._clear_dead_entities()
         

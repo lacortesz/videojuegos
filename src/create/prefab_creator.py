@@ -55,6 +55,7 @@ def create_player_square(world:esper.World, player_info:dict, player_lvl_info:di
     vel = pygame.Vector2(0,0)
     player_entity = create_square(world, size, pos, vel, color)
     world.add_component(player_entity, CTagPlayer())
+        
     return player_entity
 
 def create_input_player(world:esper.World):
