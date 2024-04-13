@@ -30,8 +30,8 @@ class GameEngine:
         self.player = self.read_json('player.json')
         self.bullets = self.read_json('bullet.json')
         
-        self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
-        #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
+        #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
+        self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
         pygame.display.set_caption(self.window['title'])
         
         self.clock = pygame.time.Clock()
