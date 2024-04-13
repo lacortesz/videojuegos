@@ -1,3 +1,4 @@
+import math
 import random
 import esper
 import pygame
@@ -70,15 +71,18 @@ def create_input_player(world:esper.World):
     world.add_component(input_right, CInputCommand("PLAYER_RIGHT", pygame.K_RIGHT))
     world.add_component(input_up, CInputCommand("PLAYER_UP", pygame.K_UP)), 
     world.add_component(input_down, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
-    world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.MOUSEBUTTONDOWN))
+    world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.BUTTON_LEFT))
 
-def create_bullet(world:esper.World, bullet_info:dict, player_position):
+def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Vector2, player_size:pygame.Vector2, mouse_position:pygame.Vector2):
     size = pygame.Vector2(bullet_info["size"]["x"] ,
                           bullet_info["size"]["y"] )
     color = pygame.Color(bullet_info["color"]["r"],
                            bullet_info["color"]["b"],
                            bullet_info["color"]["g"])
-    pos = pygame.Vector2(player_position)
-    vel = pygame.Vector2(bullet_info["velocity"])
+    pos = pygame.Vector2(player_position.x, player_position.y)
+    vel = (mouse_position - player_position)
+    vel = vel.normalize() * bullet_info["velocity"]
+    
+    #vel = pygame.Vector2(bullet_info["velocity"])
     bullet_entity = create_square(world, size, pos, vel, color)
     world.add_component(bullet_entity, CTagBullet())

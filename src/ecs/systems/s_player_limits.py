@@ -17,14 +17,7 @@ def system_player_limits(world:esper.World, screen:pygame.Surface):
     c_s:CSurface
     
     for entity, (c_t, c_v, c_s, c_e) in components:
-        cuad_rect = c_s.surf.get_rect(topleft=c_t.pos)
-        if cuad_rect.left < 0 :
-            c_t.pos.x = 0
-        if cuad_rect.right > screen_rect.width: 
-            c_t.pos.x = screen_rect.width - cuad_rect.width
-        
-        if cuad_rect.top < 0 :
-            c_t.pos.y = 0
-        if cuad_rect.bottom > screen_rect.height: 
-            c_t.pos.y = screen_rect.height - cuad_rect.height
-
+        player_rect = c_s.surf.get_rect(topleft=c_t.pos)
+        if not screen_rect.contains(player_rect):
+            player_rect.clamp_ip(screen_rect)
+            c_t.pos.xy = player_rect.topleft

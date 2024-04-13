@@ -13,13 +13,11 @@ def system_input_player(world:esper,
             do_action(c_input)
         elif event.type == pygame.KEYUP and c_input.key == event.key:
             c_input.phase = CommandPhase.END
+            do_action(c_input)   
+        elif event.type == pygame.MOUSEBUTTONDOWN and c_input.key == event.button: 
+            c_input.phase = CommandPhase.START
+            c_input.mouse_position = pygame.mouse.get_pos()
             do_action(c_input)
             
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: 
-            c_input.phase = CommandPhase.START
-            mouse_position = pygame.mouse.get_pos()
-            #print("Mouse position x: " + str(mouse_position[0]) + " y: "+ str(mouse_position[1]) )
-            do_action(c_input)
-        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1: 
-            c_input.phase = CommandPhase.END
-            #do_action(c_input)
+        #elif event.type == pygame.MOUSEBUTTONUP and event.button == 1: 
+        #    c_input.phase = CommandPhase.END

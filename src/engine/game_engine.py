@@ -78,7 +78,7 @@ class GameEngine:
         system_bullet_limits(self.ecs_world, self.screen)
         system_collission_bullet_enemy(self.ecs_world)
         self.ecs_world._clear_dead_entities()
-        
+                
     def _draw(self):
         self.screen.fill((self.window['bg_color']['r'], self.window['bg_color']['g'], self.window['bg_color']['b']))      
         system_rendering(self.ecs_world, self.screen)
@@ -121,9 +121,10 @@ class GameEngine:
                 
         if c_input.name == "PLAYER_FIRE":
             cuad_rect = self._player_c_s.surf.get_rect(topleft=self._player_c_t.pos) 
-            current_bullets = self.ecs_world.get_components(CTagBullet).__len__()
+            current_bullets = len(self.ecs_world.get_components(CTagBullet))
             max_bullets = self.level["player_spawn"]["max_bullets"]
             if current_bullets < max_bullets:
-                create_bullet(self.ecs_world, self.bullets, cuad_rect.center) 
+                create_bullet(self.ecs_world, self.bullets, self._player_c_t.pos, 
+                              self._player_c_s.surf.get_size(), c_input.mouse_position)
 
             
