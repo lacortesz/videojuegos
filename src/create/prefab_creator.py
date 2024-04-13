@@ -79,10 +79,9 @@ def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Ve
     color = pygame.Color(bullet_info["color"]["r"],
                            bullet_info["color"]["b"],
                            bullet_info["color"]["g"])
-    pos = pygame.Vector2(player_position.x, player_position.y)
+    pos = pygame.Vector2(player_position.x + (player_size[0]/2), player_position.y + player_size[1]/2)
     vel = (mouse_position - player_position)
     vel = vel.normalize() * bullet_info["velocity"]
     
-    #vel = pygame.Vector2(bullet_info["velocity"])
     bullet_entity = create_square(world, size, pos, vel, color)
     world.add_component(bullet_entity, CTagBullet())
