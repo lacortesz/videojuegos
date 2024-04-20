@@ -10,9 +10,11 @@ def system_collission_bullet_enemy(world:esper.World):
     bullets_components = world.get_components(CSurface, CTransform, CTagBullet)
     
     for enemy_entity, (ec_s, ec_t, _) in enemies_components:
-        ene_rect = ec_s.surf.get_rect(topleft = ec_t.pos)
+        ene_rect = ec_s.area.copy()
+        ene_rect.topleft = ec_t.pos
         for bullet_entity, (bc_s, bc_t, _) in bullets_components:              
-            bullet_rect = bc_s.surf.get_rect(topleft = bc_t.pos)
-            if  ene_rect.colliderect(bullet_rect):
+            bull_rect = bc_s.area.copy()
+            bull_rect.topleft = bc_t.pos
+            if  ene_rect.colliderect(bull_rect):
                 world.delete_entity(enemy_entity)
                 world.delete_entity(bullet_entity)
