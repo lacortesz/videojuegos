@@ -9,9 +9,10 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
 from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_state import CPlayerState
+from src.ecs.components.c_state import CHunterState, CPlayerState
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_hunter import CTagHunter
 from src.ecs.components.tags.c_tag_player import CTagPlayer
 
 def create_square(ecs_world:esper.World, size:pygame.Vector2,
@@ -48,7 +49,7 @@ def create_enemy_square(ecs_world:esper.World, position:pygame.Vector2, enemy_in
     velocity = pygame.Vector2(random.choice([-vel_range, vel_range]), 
                             random.choice([-vel_range, vel_range]))
 
-    enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)
+    enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
     ecs_world.add_component(enemy_entity, CTagEnemy())
     
 
@@ -92,3 +93,22 @@ def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Ve
     
     bullet_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullet_entity, CTagBullet())
+
+
+def create_hunter_square(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
+    hunter_surface = pygame.image.load(enemy_info["image"]).convert_alpha()      
+    '''vel_min = enemy_info["velocity_min"]
+    vel_max = enemy_info["velocity_max"]
+
+    if vel_min == vel_max:
+        vel_range = vel_min
+    else:
+        vel_range = random.randrange(vel_min, vel_max)
+    
+    velocity = pygame.Vector2(random.choice([-vel_range, vel_range]), 
+                            random.choice([-vel_range, vel_range]))'''
+
+    hunter_entity = create_sprite(ecs_world, position, pygame.Vector2(0,0), hunter_surface)    
+    ecs_world.add_component(hunter_entity, CTagHunter())
+    ecs_world.add_component(hunter_entity, CAnimation(enemy_info["animations"]))
+    ecs_world.add_component(hunter_entity, CHunterState())

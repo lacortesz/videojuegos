@@ -7,6 +7,7 @@ from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.c_animation import system_animation
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
+from src.ecs.systems.s_hunter_state import system_hunter_state
 from src.ecs.systems.s_input_player import system_input_player
 from src.ecs.systems.s_player_limits import system_player_limits
 from src.ecs.systems.s_player_state import system_player_state
@@ -31,6 +32,7 @@ class GameEngine:
         self.enemies = self.read_json('enemies.json')
         self.player = self.read_json('player.json')
         self.bullets = self.read_json('bullet.json')
+        self.explosion = self.read_json('explosion.json')
         
         #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
         self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
@@ -75,6 +77,7 @@ class GameEngine:
         system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)
         system_player_state(self.ecs_world)
+        system_hunter_state(self.ecs_world, self._player_entity)
         system_screen_bounce(self.ecs_world, self.screen)
         system_player_limits(self.ecs_world, self.screen)
         system_collission_player_enemy(self.ecs_world, self._player_entity, self.level)
