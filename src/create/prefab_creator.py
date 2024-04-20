@@ -3,10 +3,13 @@ import random
 import esper
 import pygame
 from src.ecs.components.c_input_command import CInputCommand
+
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
+from src.ecs.components.c_animation import CAnimation
+from src.ecs.components.c_state import CPlayerState
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_player import CTagPlayer
@@ -33,8 +36,7 @@ def create_sprite(world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2, sur
 
 
 def create_enemy_square(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
-    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha()
-    print("enemy info: " + str(enemy_info))      
+    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha()      
     vel_min = enemy_info["velocity_min"]
     vel_max = enemy_info["velocity_max"]
 
@@ -59,7 +61,9 @@ def create_player_square(world:esper.World, player_info:dict, player_lvl_info:di
     vel = pygame.Vector2(0,0)
     player_entity = create_sprite(world, pos, vel, player_sprite)
     world.add_component(player_entity, CTagPlayer())
-        
+    world.add_component(player_entity, CAnimation(player_info["animations"]))
+    world.add_component(player_entity, CPlayerState())
+    
     return player_entity
 
 def create_input_player(world:esper.World):
@@ -77,8 +81,13 @@ def create_input_player(world:esper.World):
 
 def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Vector2, player_size:pygame.Vector2, mouse_position:pygame.Vector2):
     bullet_surface = pygame.image.load(bullet_info["image"])
-    pos = pygame.Vector2(player_position.x + (player_size[0]/2), player_position.y + player_size[1]/2)
-    vel = (mouse_position - player_position)
+    bullet_size = bullet_surface.get_rect().size
+    pos = pygame.Vector2(player_position.x + (player_size[0]/2) - (bullet_size[0] / 2), 
+                         player_position.y + (player_size[1]/2) - (bullet_size[0] / 2))
+    
+    player_position_center =  pygame.Vector2(player_position.x + (player_size[0]/2),
+                                             player_position.y + (player_size[1]/2))
+    vel = (mouse_position - player_position_center)
     vel = vel.normalize() * bullet_info["velocity"]
     
     bullet_entity = create_sprite(world, pos, vel, bullet_surface)

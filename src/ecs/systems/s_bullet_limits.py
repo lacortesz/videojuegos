@@ -12,7 +12,7 @@ def system_bullet_limits(world:esper.World, screen:pygame.Surface):
     components = world.get_components(CTransform, CVelocity, CSurface, CTagBullet)
         
     for entity, (c_t, c_v, c_s, c_e) in components:
-        bullet_rect = c_s.surf.get_rect(topleft=c_t.pos)
+        bullet_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
         if not screen_rect.contains(bullet_rect):
             world.delete_entity(entity)
 
