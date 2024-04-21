@@ -83,7 +83,7 @@ class GameEngine:
         system_hunter_state(self.ecs_world, self._player_entity, self.enemies["Hunter"])    
         system_screen_bounce(self.ecs_world, self.screen)
         system_player_limits(self.ecs_world, self.screen)
-        system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion)
+        system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
         system_bullet_limits(self.ecs_world, self.screen)
         system_collission_bullet_enemy(self.ecs_world, self.explosion)
         system_explosion_kill(self.ecs_world)

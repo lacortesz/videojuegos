@@ -59,18 +59,11 @@ def create_enemy_square(ecs_world:esper.World, position:pygame.Vector2, enemy_in
     
 def create_player_square(world:esper.World, player_info:dict, player_lvl_info:dict) -> int:
     player_surface = pygame.image.load(player_info["image"]).convert_alpha()
-    size = player_surface.get_size()
     
-    player_size = player_surface.get_size()
-    
+    player_size = player_surface.get_size()   
     player_size = (player_size[0] / player_info["animations"]["number_frames"], player_size[1])
-    pos = pygame.Vector2(player_lvl_info["position"]["x"] - (player_size[0]/2), player_lvl_info["position"]["y"] - (player_size[1]/2))
-      
-      
-      
-      
-    #pos = pygame.Vector2(player_lvl_info["position"]["x"] ,
-    #                     player_lvl_info["position"]["y"] )
+    
+    pos = pygame.Vector2(player_lvl_info["position"]["x"] - (player_size[0]/2), player_lvl_info["position"]["y"] - (player_size[1]/2)) 
     vel = pygame.Vector2(0,0)
     player_entity = create_sprite(world, pos, vel, player_surface)
     world.add_component(player_entity, CTagPlayer())
@@ -124,6 +117,6 @@ def create_explosion(world:esper.World, pos:pygame.Vector2, explosion_info:dict)
     explosion_entity = create_sprite(world, pos, vel, explosion_surface)
     world.add_component(explosion_entity, CTagExplosion())
     world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
-    set_animation(CAnimation(explosion_info["animations"]),0)
+    #set_animation(CAnimation(explosion_info["animations"]),0)
     
     return explosion_entity
