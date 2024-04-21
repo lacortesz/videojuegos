@@ -4,7 +4,7 @@ from src.ecs.components.c_hunter_state import CHunterState, HunterState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
-from src.ecs.components.tags.c_tag_hunter import CTagHunter
+
 
 def system_hunter_state(world:esper.World, player_entity:int, hunter_info:dict):
     components = world.get_components(CHunterState, CAnimation, CTransform, CVelocity)

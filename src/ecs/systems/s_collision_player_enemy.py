@@ -5,6 +5,7 @@ from src.ecs.components.c_transform import CTransform
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 
 
+
 def system_collission_player_enemy(world:esper.World, player_entity:int, level:dict, explosion_info:dict):
     components = world.get_components(CSurface, CTransform, CTagEnemy)
     pl_t = world.component_for_entity(player_entity, CTransform)
@@ -15,6 +16,6 @@ def system_collission_player_enemy(world:esper.World, player_entity:int, level:d
         ene_rect = CSurface.get_area_relative(c_s.area, c_t.pos)
         if ene_rect.colliderect(pl_rect):
             world.delete_entity(enemy_entity)
-            pl_t.pos.x = level["player_spawn"]["position"]["x"] - pl_s.surf.get_width() / 2
-            pl_t.pos.y = level["player_spawn"]["position"]["y"] - pl_s.surf.get_height() / 2
+            pl_t.pos.x = level["player_spawn"]["position"]["x"] 
+            pl_t.pos.y = level["player_spawn"]["position"]["y"] 
             create_explosion(world, c_t.pos, explosion_info)
