@@ -24,15 +24,10 @@ def system_collission_player_enemy(world:esper.World, player_entity:int, level:d
             player_size = (player_size[0] / player_info["animations"]["number_frames"], player_size[1])
     
             pos = pygame.Vector2(level["player_spawn"]["position"]["x"] - (player_size[0]/2), level["player_spawn"]["position"]["y"] - (player_size[1]/2)) 
-
-            
-            
-                        
+                                   
             pl_t.pos.x = level["player_spawn"]["position"]["x"] - (player_size[0] /2)
             pl_t.pos.y = level["player_spawn"]["position"]["y"] - (player_size[1] /2)
-            
-            
-            print("lefttop x: " + str(pl_t.pos.x) + " y: " + str(pl_t.pos.y))
+
             create_explosion(world, ene_rect, explosion_info)
             
             
