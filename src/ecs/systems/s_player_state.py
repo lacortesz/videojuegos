@@ -1,6 +1,6 @@
 import esper
 from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_state import CPlayerState, PlayerState
+from src.ecs.components.c_player_state import CPlayerState, PlayerState
 from src.ecs.components.c_velocity import CVelocity
 
 def system_player_state(world:esper.World):

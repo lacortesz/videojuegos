@@ -1,38 +1,45 @@
 import esper
-from src.ecs.components.c_animation import CAnimation
-from src.ecs.components.c_state import CHunterState, HunterState
+from src.ecs.components.c_animation import CAnimation, set_animation
+from src.ecs.components.c_hunter_state import CHunterState, HunterState
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.tags.c_tag_hunter import CTagHunter
 
-def system_hunter_state(world:esper.World, player_entity:int):
-    components = world.get_components(CTransform, CAnimation, CHunterState)
+def system_hunter_state(world:esper.World, player_entity:int, hunter_info:dict):
+    components = world.get_components(CHunterState, CAnimation, CTransform, CVelocity)
     pl_t = world.component_for_entity(player_entity, CTransform)
-    pl_s = world.component_for_entity(player_entity, CSurface)
-    pl_rect = CSurface.get_area_relative(pl_s.area, pl_t.pos)
     
-    for _, (c_t, c_a, c_hst) in components:
-        if c_hst.state == HunterState.IDLE:
-            _do_idle_state(c_t, c_a, c_hst, pl_t)
-        elif c_hst.state == HunterState.MOVE:
-            _do_move_state(c_t, c_a, c_hst, pl_t)
+    for _, (c_st, c_a, c_t, c_v) in components:
+        if c_st.state == HunterState.IDLE:
+            _do_hunter_state_idle(c_st, c_a, c_t, c_v, pl_t, hunter_info)
+        elif c_st.state == HunterState.CHASE:
+            _do_hunter_state_chase(c_st, c_a, c_t, c_v, pl_t, hunter_info)
+        elif c_st.state == HunterState.RETURN:
+            _do_hunter_state_return(c_st, c_a, c_t, c_v, pl_t, hunter_info)
 
-def _do_idle_state(c_t:CTransform, c_a:CAnimation, c_pst:CHunterState, pl_t:CTransform):
-    _set_animation(c_a, 1)
-    if (c_t.pos - pl_t.pos).magnitude() < 100:
-        c_pst.state = HunterState.MOVE
+def _do_hunter_state_idle(c_st:CHunterState, c_a:CAnimation, c_t:CTransform, c_v:CVelocity, pl_t:CTransform, hunter_info:dict):
+    set_animation(c_a, 1)
+    c_v.vel.x = 0
+    c_v.vel.y = 0
+    dist_to_player = c_t.pos.distance_to(pl_t.pos)
+    if dist_to_player < hunter_info["distance_start_chase"]:
+        c_st.state = HunterState.CHASE
         
-def _do_move_state(c_t:CTransform, c_a:CAnimation, c_pst:CHunterState, pl_t:CTransform):
-    _set_animation(c_a, 0)
-    if (c_t.pos - pl_t.pos).magnitude() > 200:
-        c_pst.state = HunterState.IDLE
+def _do_hunter_state_chase(c_st:CHunterState, c_a:CAnimation, c_t:CTransform, c_v:CVelocity, pl_t:CTransform, hunter_info:dict):
+    set_animation(c_a, 0)
+    c_v.vel = (pl_t.pos - c_t.pos).normalize()*hunter_info["velocity_chase"]
+    dist_to_origin = c_st.start_pos.distance_to(c_t.pos)
+    if dist_to_origin >= hunter_info["distance_start_return"]:
+        c_st.state = HunterState.RETURN
 
-def _set_animation(c_a:CAnimation, num_amim:int):
-    if c_a.curr_anim == num_amim:
-        return
-    c_a.curr_anim = num_amim
-    c_a.curr_anim_time = 0
-    c_a.curr_frame = c_a.curr_frame = c_a.animations_list[c_a.curr_anim].start
-    
+def _do_hunter_state_return(c_st:CHunterState, c_a:CAnimation, c_t:CTransform, c_v:CVelocity, pl_t:CTransform, hunter_info:dict):
+    set_animation(c_a, 0)
+    c_v.vel = (c_st.start_pos - c_t.pos).normalize()*hunter_info["velocity_chase"]
+    dist_to_origin = c_st.start_pos.distance_to(c_t.pos)
+    if dist_to_origin <= 2:
+        c_t.pos.xy = c_st.start_pos.xy
+        c_st.state = HunterState.IDLE
+
+
     

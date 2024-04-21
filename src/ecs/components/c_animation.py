@@ -17,3 +17,11 @@ class AnimationData:
         self.start = start
         self.end = end
         self.framerate = 1.0 / framerate
+        
+def set_animation(c_a:CAnimation, num_amim:int):
+    if c_a.curr_anim == num_amim:
+        return
+    c_a.curr_anim = num_amim
+    c_a.curr_anim_time = 0
+    c_a.curr_frame = c_a.curr_frame = c_a.animations_list[num_amim].start
+    
