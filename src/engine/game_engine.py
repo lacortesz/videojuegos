@@ -75,9 +75,7 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):     
-    
         system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
-        system_animation(self.ecs_world, self.delta_time)
         system_movement(self.ecs_world, self.delta_time)  
         system_player_state(self.ecs_world)
         system_hunter_state(self.ecs_world, self._player_entity, self.enemies["Hunter"])    
@@ -86,6 +84,7 @@ class GameEngine:
         system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
         system_bullet_limits(self.ecs_world, self.screen)
         system_collission_bullet_enemy(self.ecs_world, self.explosion)
+        system_animation(self.ecs_world, self.delta_time)
         system_explosion_kill(self.ecs_world)
         self.ecs_world._clear_dead_entities()
                 

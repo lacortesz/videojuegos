@@ -8,7 +8,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_enemy_spawner import CEnemySpawner
-from src.ecs.components.c_animation import CAnimation, set_animation
+from src.ecs.components.c_animation import CAnimation
 from src.ecs.components.c_player_state import CPlayerState
 from src.ecs.components.c_hunter_state import CHunterState
 from src.ecs.components.tags.c_tag_asteroid import CTagEnemyAsteroid
@@ -65,12 +65,7 @@ def create_player_square(world:esper.World, player_info:dict, player_lvl_info:di
     
     player_size = (player_size[0] / player_info["animations"]["number_frames"], player_size[1])
     pos = pygame.Vector2(player_lvl_info["position"]["x"] - (player_size[0]/2), player_lvl_info["position"]["y"] - (player_size[1]/2))
-      
-      
-      
-      
-    #pos = pygame.Vector2(player_lvl_info["position"]["x"] ,
-    #                     player_lvl_info["position"]["y"] )
+
     vel = pygame.Vector2(0,0)
     player_entity = create_sprite(world, pos, vel, player_surface)
     world.add_component(player_entity, CTagPlayer())
@@ -110,7 +105,6 @@ def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Ve
 def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
     hunter_surface = pygame.image.load(enemy_info["image"]).convert_alpha()
     velocity = pygame.Vector2(0,0)      
-    #hunter_size = hunter_surface.get_rect().size
     
     hunter_entity = create_sprite(ecs_world, position, velocity, hunter_surface)    
     ecs_world.add_component(hunter_entity, CHunterState(position))
@@ -124,6 +118,5 @@ def create_explosion(world:esper.World, pos:pygame.Vector2, explosion_info:dict)
     explosion_entity = create_sprite(world, pos, vel, explosion_surface)
     world.add_component(explosion_entity, CTagExplosion())
     world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
-    set_animation(CAnimation(explosion_info["animations"]),0)
     
     return explosion_entity
