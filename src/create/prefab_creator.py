@@ -17,6 +17,7 @@ from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_hunter import CTagEnemyHunter
 from src.ecs.components.tags.c_tag_player import CTagPlayer
+from src.engine.service_locator import ServiceLocator
 
 def create_square(ecs_world:esper.World, size:pygame.Vector2,
                    pos:pygame.Vector2, vel:pygame.Vector2, col:pygame.Color) -> int:
@@ -40,7 +41,7 @@ def create_sprite(world:esper.World, pos:pygame.Vector2, vel:pygame.Vector2, sur
 
 
 def create_enemy_square(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
-    enemy_surface = pygame.image.load(enemy_info["image"]).convert_alpha()      
+    enemy_surface = ServiceLocator.images_service.get(enemy_info["image"])     
     vel_min = enemy_info["velocity_min"]
     vel_max = enemy_info["velocity_max"]
 
@@ -55,10 +56,11 @@ def create_enemy_square(ecs_world:esper.World, position:pygame.Vector2, enemy_in
     enemy_entity = create_sprite(ecs_world, position, velocity, enemy_surface)    
     ecs_world.add_component(enemy_entity, CTagEnemy())
     ecs_world.add_component(enemy_entity, CTagEnemyAsteroid())
+    ServiceLocator.sounds_service.play(enemy_info["sound"])  
 
     
 def create_player_square(world:esper.World, player_info:dict, player_lvl_info:dict) -> int:
-    player_surface = pygame.image.load(player_info["image"]).convert_alpha()
+    player_surface = ServiceLocator.images_service.get(player_info["image"])  
     size = player_surface.get_size()
     
     player_size = player_surface.get_size()
@@ -88,7 +90,7 @@ def create_input_player(world:esper.World):
     world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.BUTTON_LEFT))
 
 def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Vector2, player_size:pygame.Vector2, mouse_position:pygame.Vector2):
-    bullet_surface = pygame.image.load(bullet_info["image"])
+    bullet_surface = ServiceLocator.images_service.get(bullet_info["image"])  
     bullet_size = bullet_surface.get_rect().size
     pos = pygame.Vector2(player_position.x + (player_size[0]/2) - (bullet_size[0] / 2), 
                          player_position.y + (player_size[1]/2) - (bullet_size[0] / 2))
@@ -100,10 +102,11 @@ def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Ve
     
     bullet_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullet_entity, CTagBullet())
+    ServiceLocator.sounds_service.play(bullet_info["sound"])  
 
 
 def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
-    hunter_surface = pygame.image.load(enemy_info["image"]).convert_alpha()
+    hunter_surface = ServiceLocator.images_service.get(enemy_info["image"])  
     velocity = pygame.Vector2(0,0)      
     
     hunter_entity = create_sprite(ecs_world, position, velocity, hunter_surface)    
@@ -113,10 +116,11 @@ def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_in
     ecs_world.add_component(hunter_entity, CTagEnemyHunter())
     
 def create_explosion(world:esper.World, pos:pygame.Vector2, explosion_info:dict):
-    explosion_surface = pygame.image.load(explosion_info["image"])
+    explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])  
     vel = pygame.Vector2(0,0)
     explosion_entity = create_sprite(world, pos, vel, explosion_surface)
     world.add_component(explosion_entity, CTagExplosion())
     world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
+    ServiceLocator.sounds_service.play(explosion_info["sound"])
     
     return explosion_entity
