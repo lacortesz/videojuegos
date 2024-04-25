@@ -3,9 +3,7 @@ import pygame
 import esper
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
 
-def system_input_player(world:esper, 
-                        event:pygame.event.Event,
-                        do_action:Callable[[CInputCommand], None]):
+def system_input_player(world:esper, event:pygame.event.Event, do_action:Callable[[CInputCommand], None]):
     components =world.get_component(CInputCommand)
     for _, c_input in components:
         if event.type == pygame.KEYDOWN and c_input.key == event.key:
@@ -19,5 +17,7 @@ def system_input_player(world:esper,
             c_input.mouse_position = pygame.mouse.get_pos()
             do_action(c_input)
             
-        #elif event.type == pygame.MOUSEBUTTONUP and event.button == 1: 
-        #    c_input.phase = CommandPhase.END
+        elif event.type == pygame.K_p and c_input.key == event.key:
+            c_input.phase = CommandPhase.END
+            do_action(c_input)
+        

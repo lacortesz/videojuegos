@@ -40,6 +40,7 @@ class GameEngine:
         #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
         pygame.display.set_caption(self.window['title'])
         
+        self.paused = False
         self.clock = pygame.time.Clock()
         self.is_running = False
         self.framerate = self.window['framerate']
@@ -77,18 +78,19 @@ class GameEngine:
                 self.is_running = False
 
     def _update(self):     
-        system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
-        system_movement(self.ecs_world, self.delta_time)  
-        system_player_state(self.ecs_world)
-        system_hunter_state(self.ecs_world, self._player_entity, self.enemies["Hunter"])    
-        system_screen_bounce(self.ecs_world, self.screen)
-        system_player_limits(self.ecs_world, self.screen)
-        system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
-        system_bullet_limits(self.ecs_world, self.screen)
-        system_collission_bullet_enemy(self.ecs_world, self.explosion)
-        system_animation(self.ecs_world, self.delta_time)
-        system_explosion_kill(self.ecs_world)
-        self.ecs_world._clear_dead_entities()
+        if not self.paused:
+            system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
+            system_movement(self.ecs_world, self.delta_time)  
+            system_player_state(self.ecs_world)
+            system_hunter_state(self.ecs_world, self._player_entity, self.enemies["Hunter"])    
+            system_screen_bounce(self.ecs_world, self.screen)
+            system_player_limits(self.ecs_world, self.screen)
+            system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
+            system_bullet_limits(self.ecs_world, self.screen)
+            system_collission_bullet_enemy(self.ecs_world, self.explosion)
+            system_animation(self.ecs_world, self.delta_time)
+            system_explosion_kill(self.ecs_world)
+            self.ecs_world._clear_dead_entities()
                 
     def _draw(self):
         self.screen.fill((self.window['bg_color']['r'], self.window['bg_color']['g'], self.window['bg_color']['b']))      
@@ -137,5 +139,11 @@ class GameEngine:
             if current_bullets < max_bullets:
                 create_bullet(self.ecs_world, self.bullets, self._player_c_t.pos, 
                               self._player_c_s.area.size, c_input.mouse_position)
+                         
+        if c_input.name == "PAUSE":
+            if c_input.phase == CommandPhase.END:
+                print(" Pulso tecla p....")
+                self.paused = not self.paused
+                
 
             
