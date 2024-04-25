@@ -3,7 +3,7 @@ import pygame
 import esper
 import json
 
-from src.create.prefab_creator import create_bullet, create_input_player, create_square, create_level, create_player_square
+from src.create.prefab_creator import create_bullet, create_input_player, create_square, create_level, create_player_square, create_text
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
@@ -35,12 +35,14 @@ class GameEngine:
         self.player = self.read_json('player.json')
         self.bullets = self.read_json('bullet.json')
         self.explosion = self.read_json('explosion.json')
+        self.interface = self.read_json('interface.json')
         
         self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
         #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
         pygame.display.set_caption(self.window['title'])
         
         self.paused = False
+        self.pause_entity = 0
         self.clock = pygame.time.Clock()
         self.is_running = False
         self.framerate = self.window['framerate']
@@ -66,6 +68,10 @@ class GameEngine:
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         create_level(self.ecs_world, self.level)
         create_input_player(self.ecs_world)
+        create_text(self.ecs_world, self.interface["title"])
+        create_text(self.ecs_world, self.interface["instructions"])
+        create_text(self.ecs_world, self.interface["especial_title"])
+        create_text(self.ecs_world, self.interface["especial_porcentage"])
                
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -143,7 +149,12 @@ class GameEngine:
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.END:
                 print(" Pulso tecla p....")
-                self.paused = not self.paused
-                
+                if not self.paused: 
+                    self.paused = True
+                    self.pause_entity = create_text(self.ecs_world, self.interface["paused"])
+                else:
+                    self.paused = False
+                    self.ecs_world.delete_entity(self.pause_entity)
+                    self.pause_entity = 0
 
             
