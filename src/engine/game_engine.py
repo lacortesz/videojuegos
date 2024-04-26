@@ -7,6 +7,7 @@ from src.create.prefab_creator import create_bullet, create_input_player, create
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
+from src.ecs.systems.s_collision_bullet_special_enemy import system_collission_bullet_special_enemy
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
 from src.ecs.systems.s_explosion_kill import system_explosion_kill
 from src.ecs.systems.s_hunter_state import system_hunter_state
@@ -96,6 +97,7 @@ class GameEngine:
             system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
             system_bullet_limits(self.ecs_world, self.screen)
             system_collission_bullet_enemy(self.ecs_world, self.explosion)
+            system_collission_bullet_special_enemy(self.ecs_world, self.explosion)
             system_animation(self.ecs_world, self.delta_time)
             system_explosion_kill(self.ecs_world)
             self.ecs_world._clear_dead_entities()

@@ -13,6 +13,7 @@ from src.ecs.components.c_player_state import CPlayerState
 from src.ecs.components.c_hunter_state import CHunterState
 from src.ecs.components.tags.c_tag_asteroid import CTagEnemyAsteroid
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
+from src.ecs.components.tags.c_tag_bullet_special import CTagBulletSpecial
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_hunter import CTagEnemyHunter
@@ -120,7 +121,8 @@ def create_special_bullets(world:esper.World, bullet_info:dict, bullet_position:
         velocity = pygame.Vector2(directions[i])
         
         bullet_entity = create_sprite(world, pos, velocity, bullet_surface)
-        world.add_component(bullet_entity, CTagBullet())
+        #world.add_component(bullet_entity, CTagBullet())
+        world.add_component(bullet_entity, CTagBulletSpecial())
         
 
 def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
