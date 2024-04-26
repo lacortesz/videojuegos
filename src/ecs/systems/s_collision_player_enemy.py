@@ -28,6 +28,6 @@ def system_collission_player_enemy(world:esper.World, player_entity:int, level:d
             pl_t.pos.x = level["player_spawn"]["position"]["x"] - (player_size[0] /2)
             pl_t.pos.y = level["player_spawn"]["position"]["y"] - (player_size[1] /2)
 
-            create_explosion(world, ene_rect, explosion_info)
+            create_explosion(world, ene_rect, explosion_info, True)
             
             

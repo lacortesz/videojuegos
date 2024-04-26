@@ -116,13 +116,16 @@ def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_in
     ecs_world.add_component(hunter_entity, CTagEnemy())
     ecs_world.add_component(hunter_entity, CTagEnemyHunter())
     
-def create_explosion(world:esper.World, pos:pygame.Vector2, explosion_info:dict):
+def create_explosion(world:esper.World, pos:pygame.Vector2, explosion_info:dict, collision:bool):
     explosion_surface = ServiceLocator.images_service.get(explosion_info["image"])  
     vel = pygame.Vector2(0,0)
     explosion_entity = create_sprite(world, pos, vel, explosion_surface)
     world.add_component(explosion_entity, CTagExplosion())
     world.add_component(explosion_entity, CAnimation(explosion_info["animations"]))
-    ServiceLocator.sounds_service.play(explosion_info["sound"])
+    if collision:
+        ServiceLocator.sounds_service.play(explosion_info["colission_sound"])
+    else:
+        ServiceLocator.sounds_service.play(explosion_info["sound"])
     
     return explosion_entity
 

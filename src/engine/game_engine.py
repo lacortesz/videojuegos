@@ -22,6 +22,7 @@ from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
 from src.ecs.components.c_input_command import CInputCommand, CommandPhase
+from src.engine.service_locator import ServiceLocator
 
 
 class GameEngine:
@@ -87,7 +88,7 @@ class GameEngine:
         if not self.paused:
             system_enemy_spawner(self.ecs_world, self.enemies, self.delta_time)
             system_movement(self.ecs_world, self.delta_time)  
-            system_player_state(self.ecs_world)
+            system_player_state(self.ecs_world, self.player)
             system_hunter_state(self.ecs_world, self._player_entity, self.enemies["Hunter"])    
             system_screen_bounce(self.ecs_world, self.screen)
             system_player_limits(self.ecs_world, self.screen)
@@ -115,6 +116,7 @@ class GameEngine:
 
     def _do_action(self, c_input:CInputCommand):
         if c_input.name == "PLAYER_LEFT":
+              
             if c_input.phase == CommandPhase.START:
                 self._player_c_v.vel.x -= self.player["input_velocity"]
             elif c_input.phase == CommandPhase.END:
@@ -148,7 +150,6 @@ class GameEngine:
                          
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.END:
-                print(" Pulso tecla p....")
                 if not self.paused: 
                     self.paused = True
                     self.pause_entity = create_text(self.ecs_world, self.interface["paused"])

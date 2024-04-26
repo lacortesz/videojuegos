@@ -19,4 +19,4 @@ def system_collission_bullet_enemy(world:esper.World, explosion_info:dict):
                 
                 world.delete_entity(enemy_entity)
                 world.delete_entity(bullet_entity)
-                create_explosion(world, ene_rect, explosion_info)
+                create_explosion(world, ene_rect, explosion_info, False)
