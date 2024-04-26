@@ -82,6 +82,7 @@ def create_input_player(world:esper.World):
     input_up = world.create_entity()
     input_down = world.create_entity()
     input_fire = world.create_entity()
+    input_fire_special = world.create_entity()
     input_pause = world.create_entity()
     
     world.add_component(input_left, CInputCommand("PLAYER_LEFT", pygame.K_LEFT))
@@ -89,6 +90,7 @@ def create_input_player(world:esper.World):
     world.add_component(input_up, CInputCommand("PLAYER_UP", pygame.K_UP)), 
     world.add_component(input_down, CInputCommand("PLAYER_DOWN", pygame.K_DOWN))
     world.add_component(input_fire, CInputCommand("PLAYER_FIRE", pygame.BUTTON_LEFT))
+    world.add_component(input_fire_special, CInputCommand("PLAYER_FIRE_SPECIAL", pygame.BUTTON_RIGHT))
     world.add_component(input_pause, CInputCommand("PAUSE", pygame.K_p))
 
 def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Vector2, player_size:pygame.Vector2, mouse_position:pygame.Vector2):
@@ -105,6 +107,21 @@ def create_bullet(world:esper.World, bullet_info:dict, player_position:pygame.Ve
     bullet_entity = create_sprite(world, pos, vel, bullet_surface)
     world.add_component(bullet_entity, CTagBullet())
     ServiceLocator.sounds_service.play(bullet_info["sound"])  
+    
+def create_special_bullets(world:esper.World, bullet_info:dict, bullet_position:pygame.Vector2):
+    bullet_surface = ServiceLocator.images_service.get(bullet_info["image"])  
+    ServiceLocator.sounds_service.play(bullet_info["sound"]) 
+    vel = bullet_info["velocity"]
+    directions = [(vel,vel), (vel,-vel), (-vel,vel), (-vel,-vel)]
+    for i in range(0, 4):
+        bullet_size = bullet_surface.get_rect().size
+        pos = pygame.Vector2(bullet_position.x , bullet_position.y)
+        #vel = vel.normalize() * bullet_info["velocity"]
+        velocity = pygame.Vector2(directions[i])
+        
+        bullet_entity = create_sprite(world, pos, velocity, bullet_surface)
+        world.add_component(bullet_entity, CTagBullet())
+        
 
 def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):
     hunter_surface = ServiceLocator.images_service.get(enemy_info["image"])  

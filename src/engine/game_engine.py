@@ -3,7 +3,7 @@ import pygame
 import esper
 import json
 
-from src.create.prefab_creator import create_bullet, create_input_player, create_square, create_level, create_player_square, create_text
+from src.create.prefab_creator import create_bullet, create_input_player, create_special_bullets, create_level, create_player_square, create_text
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
@@ -37,6 +37,7 @@ class GameEngine:
         self.bullets = self.read_json('bullet.json')
         self.explosion = self.read_json('explosion.json')
         self.interface = self.read_json('interface.json')
+        self.bullets_special = self.read_json('bullet_special.json')
         
         self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']))
         #self.screen = pygame.display.set_mode((self.window['size']['w'], self.window['size']['h']), pygame.SCALED)
@@ -147,6 +148,12 @@ class GameEngine:
             if current_bullets < max_bullets:
                 create_bullet(self.ecs_world, self.bullets, self._player_c_t.pos, 
                               self._player_c_s.area.size, c_input.mouse_position)
+                
+        if c_input.name == "PLAYER_FIRE_SPECIAL":
+            bullets_components = self.ecs_world.get_components(CSurface, CTransform, CTagBullet)
+            for bullet_entity, (bc_s, bc_t, _) in bullets_components:
+                create_special_bullets(self.ecs_world, self.bullets_special, bc_t.pos)
+                self.ecs_world.delete_entity(bullet_entity)
                          
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.END:
@@ -157,5 +164,8 @@ class GameEngine:
                     self.paused = False
                     self.ecs_world.delete_entity(self.pause_entity)
                     self.pause_entity = 0
+                    
+        
+            
 
             
