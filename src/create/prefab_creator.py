@@ -4,6 +4,7 @@ import esper
 import pygame
 from src.ecs.components.c_input_command import CInputCommand
 
+from src.ecs.components.c_origin import COrigin
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -114,15 +115,13 @@ def create_special_bullets(world:esper.World, bullet_info:dict, bullet_position:
     ServiceLocator.sounds_service.play(bullet_info["sound"]) 
     vel = bullet_info["velocity"]
     directions = [(vel,vel), (vel,-vel), (-vel,vel), (-vel,-vel)]
-    for i in range(0, 4):
-        bullet_size = bullet_surface.get_rect().size
-        pos = pygame.Vector2(bullet_position.x , bullet_position.y)
-        #vel = vel.normalize() * bullet_info["velocity"]
+    origin = pygame.Vector2(bullet_position.x , bullet_position.y)
+    for i in range(0, 4):  
         velocity = pygame.Vector2(directions[i])
-        
+        pos = pygame.Vector2(bullet_position.x , bullet_position.y)
         bullet_entity = create_sprite(world, pos, velocity, bullet_surface)
-        #world.add_component(bullet_entity, CTagBullet())
         world.add_component(bullet_entity, CTagBulletSpecial())
+        world.add_component(bullet_entity, COrigin(origin))
         
 
 def create_enemy_hunter(ecs_world:esper.World, position:pygame.Vector2, enemy_info:dict):

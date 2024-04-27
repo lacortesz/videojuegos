@@ -6,6 +6,7 @@ import json
 from src.create.prefab_creator import create_bullet, create_input_player, create_special_bullets, create_level, create_player_square, create_text
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.s_animation import system_animation
+from src.ecs.systems.s_bullet_special_limits import system_bullet_special_limits
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
 from src.ecs.systems.s_collision_bullet_special_enemy import system_collission_bullet_special_enemy
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
@@ -94,6 +95,7 @@ class GameEngine:
             system_hunter_state(self.ecs_world, self._player_entity, self.enemies["Hunter"])    
             system_screen_bounce(self.ecs_world, self.screen)
             system_player_limits(self.ecs_world, self.screen)
+            system_bullet_special_limits(self.ecs_world, self.bullets_special)
             system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
             system_bullet_limits(self.ecs_world, self.screen)
             system_collission_bullet_enemy(self.ecs_world, self.explosion)
@@ -152,8 +154,9 @@ class GameEngine:
                               self._player_c_s.area.size, c_input.mouse_position)
                 
         if c_input.name == "PLAYER_FIRE_SPECIAL":
-            bullets_components = self.ecs_world.get_components(CSurface, CTransform, CTagBullet)
-            for bullet_entity, (bc_s, bc_t, _) in bullets_components:
+            bullets_components = self.ecs_world.get_components(CTransform, CTagBullet)
+            for bullet_entity, (bc_t, _) in bullets_components:
+                print("special bullet origin engine: " +  str(bc_t.pos.x) + " , " + str(bc_t.pos.y))
                 create_special_bullets(self.ecs_world, self.bullets_special, bc_t.pos)
                 self.ecs_world.delete_entity(bullet_entity)
                          
