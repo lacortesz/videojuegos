@@ -2,9 +2,10 @@ import math
 import random
 import esper
 import pygame
+from src.ecs.components.c_charger import CCharger
 from src.ecs.components.c_input_command import CInputCommand
 
-from src.ecs.components.c_origin import COrigin
+from src.ecs.components.c_bullet_special_origin import COrigin
 from src.ecs.components.c_surface import CSurface
 from src.ecs.components.c_transform import CTransform
 from src.ecs.components.c_velocity import CVelocity
@@ -16,6 +17,7 @@ from src.ecs.components.tags.c_tag_asteroid import CTagEnemyAsteroid
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.components.tags.c_tag_bullet_special import CTagBulletSpecial
 from src.ecs.components.tags.c_tag_enemy import CTagEnemy
+from src.ecs.components.tags.c_tag_energy_label import CTagEnergyLabel
 from src.ecs.components.tags.c_tag_explosion import CTagExplosion
 from src.ecs.components.tags.c_tag_hunter import CTagEnemyHunter
 from src.ecs.components.tags.c_tag_player import CTagPlayer
@@ -147,16 +149,24 @@ def create_explosion(world:esper.World, pos:pygame.Vector2, explosion_info:dict,
     
     return explosion_entity
 
-def create_text(world:esper.World, text_info:dict) -> int:
+def create_text(world:esper.World, text_info:dict, text) -> int:
     text_font = ServiceLocator.fonts_service.get(text_info["font"], text_info["size"])
     text_pos = (text_info["position"]["x"], text_info["position"]["y"])
     text_color = (text_info["color"]["r"], text_info["color"]["g"], text_info["color"]["b"])
-    text_text = text_info["text"]
-
-    text_surface = text_font.render(text_text, False, text_color, None)
+    
+    text_surface = text_font.render(text, False, text_color, None)
     
     text_entity = world.create_entity()
     world.add_component(text_entity, CTransform(text_pos))
     world.add_component(text_entity, CSurface.from_text(text_surface))
     
     return text_entity
+
+def create_energy_display_label(world:esper.World, text_info:dict, text) -> int:
+    energy_display_label_entity = create_text(world, text_info, text)
+    world.add_component(energy_display_label_entity, CTagEnergyLabel())
+
+def create_energy_charger(world:esper.World, info:dict) -> int:
+    energy_display = world.create_entity()
+    world.add_component(energy_display, CCharger(info))
+    return energy_display

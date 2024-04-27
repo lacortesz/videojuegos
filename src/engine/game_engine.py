@@ -3,10 +3,11 @@ import pygame
 import esper
 import json
 
-from src.create.prefab_creator import create_bullet, create_input_player, create_special_bullets, create_level, create_player_square, create_text
+from src.create.prefab_creator import create_bullet, create_energy_charger, create_input_player, create_special_bullets, create_level, create_player_square, create_text, create_energy_display_label
 from src.ecs.components.tags.c_tag_bullet import CTagBullet
 from src.ecs.systems.s_animation import system_animation
 from src.ecs.systems.s_bullet_special_limits import system_bullet_special_limits
+from src.ecs.systems.s_energy_charger import system_energy_charger
 from src.ecs.systems.s_collision_bullet_enemy import system_collission_bullet_enemy
 from src.ecs.systems.s_collision_bullet_special_enemy import system_collission_bullet_special_enemy
 from src.ecs.systems.s_collision_player_enemy import system_collission_player_enemy
@@ -51,6 +52,8 @@ class GameEngine:
         self.is_running = False
         self.framerate = self.window['framerate']
         self.delta_time = 0
+        self.on_energy_charge = False
+        self.energy_charger_activated = False
         
         self.ecs_world = esper.World()
 
@@ -70,12 +73,20 @@ class GameEngine:
         self._player_c_v = self.ecs_world.component_for_entity(self._player_entity, CVelocity)
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
+        
+        #self._energy_display = create_energy_display(self.ecs_world, self.interface)
+        
         create_level(self.ecs_world, self.level)
-        create_input_player(self.ecs_world)
-        create_text(self.ecs_world, self.interface["title"])
-        create_text(self.ecs_world, self.interface["instructions"])
-        create_text(self.ecs_world, self.interface["especial_title"])
-        create_text(self.ecs_world, self.interface["especial_porcentage"])
+        create_input_player(self.ecs_world)  
+        create_text(self.ecs_world, self.interface["title"], self.interface["title"]["text"])
+        create_text(self.ecs_world, self.interface["instructions"], self.interface["instructions"]["text"])
+        create_text(self.ecs_world, self.interface["special_title"], self.interface["special_title"]["text"])
+        
+        self.energy_label = create_energy_display_label(self.ecs_world, self.interface["special_energy_full"], "100")
+        
+        #create_enery_special(self.ecs_world, self.interface["special_level"], self.special_level_entity)
+        #self.special_level_entity =  create_text(self.ecs_world, self.interface["special_level"])
+        
                
     def _calculate_time(self):
         self.clock.tick(self.framerate)
@@ -100,6 +111,7 @@ class GameEngine:
             system_bullet_limits(self.ecs_world, self.screen)
             system_collission_bullet_enemy(self.ecs_world, self.explosion)
             system_collission_bullet_special_enemy(self.ecs_world, self.explosion)
+            system_energy_charger(self.ecs_world, self.delta_time, self.energy_charger_activated)
             system_animation(self.ecs_world, self.delta_time)
             system_explosion_kill(self.ecs_world)
             self.ecs_world._clear_dead_entities()
@@ -120,8 +132,7 @@ class GameEngine:
         return dictionary
 
     def _do_action(self, c_input:CInputCommand):
-        if c_input.name == "PLAYER_LEFT":
-              
+        if c_input.name == "PLAYER_LEFT":          
             if c_input.phase == CommandPhase.START:
                 self._player_c_v.vel.x -= self.player["input_velocity"]
             elif c_input.phase == CommandPhase.END:
@@ -156,10 +167,11 @@ class GameEngine:
         if c_input.name == "PLAYER_FIRE_SPECIAL":
             bullets_components = self.ecs_world.get_components(CTransform, CTagBullet)
             for bullet_entity, (bc_t, _) in bullets_components:
-                print("special bullet origin engine: " +  str(bc_t.pos.x) + " , " + str(bc_t.pos.y))
+                if len(bullets_components) > 0:
+                    create_energy_charger(self.ecs_world, self.interface["special_energy_on_charge"])
                 create_special_bullets(self.ecs_world, self.bullets_special, bc_t.pos)
-                self.ecs_world.delete_entity(bullet_entity)
-                         
+                self.ecs_world.delete_entity(bullet_entity)       
+                               
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.END:
                 if not self.paused: 
