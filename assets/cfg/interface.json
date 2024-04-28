@@ -71,7 +71,7 @@
         "inicial_value": 100,
         "min_value": 0,
         "max_value":100,
-        "framerate": 50
+        "framerate": 42
     },
     "paused": {
         "font": "assets/fnt/PressStart2P.ttf",
