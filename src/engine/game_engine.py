@@ -74,20 +74,13 @@ class GameEngine:
         self._player_c_t = self.ecs_world.component_for_entity(self._player_entity, CTransform)
         self._player_c_s = self.ecs_world.component_for_entity(self._player_entity, CSurface)
         
-        #self._energy_display = create_energy_display(self.ecs_world, self.interface)
-        
         create_level(self.ecs_world, self.level)
         create_input_player(self.ecs_world)  
         create_text(self.ecs_world, self.interface["title"], self.interface["title"]["text"])
         create_text(self.ecs_world, self.interface["instructions"], self.interface["instructions"]["text"])
-        create_text(self.ecs_world, self.interface["special_title"], self.interface["special_title"]["text"])
-        
-        self.energy_label = create_energy_display_label(self.ecs_world, self.interface["special_energy_full"], "100")
-        
-        #create_enery_special(self.ecs_world, self.interface["special_level"], self.special_level_entity)
-        #self.special_level_entity =  create_text(self.ecs_world, self.interface["special_level"])
-        
-               
+        create_text(self.ecs_world, self.interface["special_title"], self.interface["special_title"]["text"])  
+        create_energy_charger(self.ecs_world, self.interface["special_energy_full"], self.interface["special_energy_on_charge"])
+                 
     def _calculate_time(self):
         self.clock.tick(self.framerate)
         self.delta_time = self.clock.get_time() / 1000.0
@@ -110,8 +103,9 @@ class GameEngine:
             system_collission_player_enemy(self.ecs_world, self._player_entity, self.level, self.explosion, self.player)
             system_bullet_limits(self.ecs_world, self.screen)
             system_collission_bullet_enemy(self.ecs_world, self.explosion)
-            system_collission_bullet_special_enemy(self.ecs_world, self.explosion)
-            system_energy_charger(self.ecs_world, self.delta_time, self.energy_charger_activated)
+            system_collission_bullet_special_enemy(self.ecs_world, self.explosion)  
+            self.on_energy_charge = system_energy_charger(self.ecs_world, self.delta_time, self.energy_charger_activated)
+            self.energy_charger_activated = self.on_energy_charge                     
             system_animation(self.ecs_world, self.delta_time)
             system_explosion_kill(self.ecs_world)
             self.ecs_world._clear_dead_entities()
@@ -167,16 +161,17 @@ class GameEngine:
         if c_input.name == "PLAYER_FIRE_SPECIAL":
             bullets_components = self.ecs_world.get_components(CTransform, CTagBullet)
             for bullet_entity, (bc_t, _) in bullets_components:
-                if len(bullets_components) > 0:
-                    create_energy_charger(self.ecs_world, self.interface["special_energy_on_charge"])
-                create_special_bullets(self.ecs_world, self.bullets_special, bc_t.pos)
-                self.ecs_world.delete_entity(bullet_entity)       
+                if len(bullets_components) > 0 and not self.on_energy_charge:
+                    self.energy_charger_activated = True
+                if not self.on_energy_charge:
+                    create_special_bullets(self.ecs_world, self.bullets_special, bc_t.pos)
+                    self.ecs_world.delete_entity(bullet_entity)       
                                
         if c_input.name == "PAUSE":
             if c_input.phase == CommandPhase.END:
                 if not self.paused: 
                     self.paused = True
-                    self.pause_entity = create_text(self.ecs_world, self.interface["paused"])
+                    self.pause_entity = create_text(self.ecs_world, self.interface["paused"], self.interface["paused"]["text"])
                 else:
                     self.paused = False
                     self.ecs_world.delete_entity(self.pause_entity)

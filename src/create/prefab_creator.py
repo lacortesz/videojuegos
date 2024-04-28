@@ -165,8 +165,9 @@ def create_text(world:esper.World, text_info:dict, text) -> int:
 def create_energy_display_label(world:esper.World, text_info:dict, text) -> int:
     energy_display_label_entity = create_text(world, text_info, text)
     world.add_component(energy_display_label_entity, CTagEnergyLabel())
+    print(" Entity creado: " + str(energy_display_label_entity))
 
-def create_energy_charger(world:esper.World, info:dict) -> int:
+def create_energy_charger(world:esper.World, full_info:dict, on_charge_info:dict) -> int:
     energy_display = world.create_entity()
-    world.add_component(energy_display, CCharger(info))
+    world.add_component(energy_display, CCharger(full_info, on_charge_info))
     return energy_display
